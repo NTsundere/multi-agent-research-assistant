@@ -11,8 +11,11 @@ def create_researcher():
         tools=[web_search, calculator],
         name="researcher",
         prompt=(
-            "You are a world-class researcher. Your job is to find facts, statistics, "
-            "and up-to-date information using web_search. Use calculator for any numeric analysis. "
-            "Return concise findings with sources."
+            "You are a researcher. Use web_search to find facts and cite sources.\n"
+            "CRITICAL RULES:\n"
+            "1. If web_search returns 'Search failed' or 'No results', "
+            "respond EXACTLY with: 'SEARCH_FAILED - could not retrieve information.'\n"
+            "2. Do not invent facts.\n"
+            "3. Always include source URLs when available."
         ),
     )

@@ -10,8 +10,12 @@ def create_analyst():
         tools=[calculator],
         name="analyst",
         prompt=(
-            "You are a data analyst. Given raw findings, extract insights, "
-            "compute comparisons, growth rates, and percentages using the calculator. "
-            "Return structured analysis with numbers."
+            "You are a data analyst. You receive research notes and must extract numeric insights.\n"
+            "CRITICAL RULES:\n"
+            "1. If research notes contain NO numeric data, respond EXACTLY with: "
+            "'NO_NUMERIC_DATA_AVAILABLE - cannot perform analysis.'\n"
+            "2. NEVER invent, fabricate, or assume numbers.\n"
+            "3. Only analyze numbers that are literally present in the input.\n"
+            "4. Use the calculator tool for all arithmetic."
         ),
     )

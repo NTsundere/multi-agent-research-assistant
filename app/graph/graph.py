@@ -23,13 +23,24 @@ def build_graph():
 
     def research_node(state):
         result = researcher.invoke({"messages": state["messages"]})
+        content = result["messages"][-1].content
+        if "SEARCH_FAILED" in content or "could not retrieve" in content.lower():
+            return {
+                "messages": result["messages"],
+                "research_notes": content,
+                "final_report": content,
+                "analysis": "",
+            }
         return {
             "messages": result["messages"],
-            "research_notes": result["messages"][-1].content,
+            "research_notes": content,
         }
 
     def analyst_node(state):
-        prompt = f"Analyze these findings:\n{state.get('research_notes', '')}"
+        prompt = (
+            f"Analyze these findings. If no numeric data — respond with "
+            f"'NO_NUMERIC_DATA_AVAILABLE'.\n\nResearch notes:\n{state.get('research_notes', '')}"
+        )
         result = analyst.invoke({"messages": [{"role": "user", "content": prompt}]})
         return {
             "messages": result["messages"],
@@ -40,7 +51,7 @@ def build_graph():
         prompt = (
             f"Research:\n{state.get('research_notes', '')}\n\n"
             f"Analysis:\n{state.get('analysis', '')}\n\n"
-            "Write the final report."
+            "Write the final report. Follow your CRITICAL RULES."
         )
         result = writer.invoke({"messages": [{"role": "user", "content": prompt}]})
         return {

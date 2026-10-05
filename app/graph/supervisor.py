@@ -1,42 +1,29 @@
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from app.llm import get_llm
-import re
+from app.logger import setup_logger
 
-
-SUPERVISOR_PROMPT = """You are a team supervisor managing three agents:
-- researcher: finds facts, statistics, and current information via web search
-- analyst: analyzes numbers, computes metrics, and extracts insights
-- writer: produces the final Markdown report
-
-Given the conversation, decide which agent should act next.
-
-Reply with EXACTLY ONE WORD from this list: researcher, analyst, writer, or FINISH.
-
-Rules:
-- If no research yet -> researcher
-- If research exists but no analysis -> analyst
-- If analysis exists but no report -> writer
-- If final report is written -> FINISH
-
-Your answer:"""
-
-
-def _parse_decision(text: str) -> str:
-    """Ищем одно из ключевых слов в ответе модели."""
-    text_lower = text.lower()
-    for word in ["researcher", "analyst", "writer", "finish"]:
-        if word in text_lower:
-            return word.capitalize() if word == "finish" else word
-    return "FINISH"
+logger = setup_logger(__name__)
 
 
 def supervisor_node(state):
-    llm = get_llm()
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", SUPERVISOR_PROMPT),
-        MessagesPlaceholder(variable_name="messages"),
-    ])
-    chain = prompt | llm
-    result = chain.invoke({"messages": state["messages"]})
-    decision = _parse_decision(result.content)
-    return {"next_agent": decision}
+    """
+    Детерминированный supervisor.
+    Запускает агентов в фиксированном порядке: researcher -> analyst -> writer -> FINISH.
+    Это надёжнее, чем LLM-решение, потому что Qwen 2.5:7b часто выдаёт неверные ответы.
+    """
+    has_research = bool(state.get("research_notes", "").strip())
+    has_analysis = bool(state.get("analysis", "").strip())
+    has_report = bool(state.get("final_report", "").strip())
+
+    if not has_research:
+        logger.info("Supervisor decision: -> researcher")
+        return {"next_agent": "researcher"}
+
+    if not has_analysis:
+        logger.info("Supervisor decision: -> analyst")
+        return {"next_agent": "analyst"}
+
+    if not has_report:
+        logger.info("Supervisor decision: -> writer")
+        return {"next_agent": "writer"}
+
+    logger.info("Supervisor decision: -> FINISH")
+    return {"next_agent": "FINISH"}

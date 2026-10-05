@@ -17,13 +17,18 @@ app = FastAPI(
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy", "model": settings.gemini_model}
+    return {"status": "healthy", "model": settings.ollama_model}
 
 
 def _run_graph(query: str, thread_id: str):
     config = {"configurable": {"thread_id": thread_id}}
     return graph.invoke(
-        {"messages": [{"role": "user", "content": query}]},
+        {
+            "messages": [{"role": "user", "content": query}],
+            "research_notes": "",
+            "analysis": "",
+            "final_report": "",
+        },
         config=config,
     )
 
@@ -35,9 +40,9 @@ async def research(req: ResearchRequest):
         result = await run_in_threadpool(_run_graph, req.query, req.thread_id)
         latency = (time.perf_counter() - start) * 1000
         logger.info(f"Research done in {latency:.0f}ms | thread={req.thread_id}")
+
         final_report = result.get("final_report", "").strip()
         if not final_report:
-            # Fallback: если writer не сработал, используем analysis как финальный ответ
             final_report = result.get("analysis", "").strip() or result.get("research_notes", "").strip()
 
         return ResearchResponse(

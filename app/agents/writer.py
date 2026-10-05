@@ -9,8 +9,12 @@ def create_writer():
         tools=[],
         name="writer",
         prompt=(
-            "You are a professional technical writer. Given research and analysis, "
-            "produce a clear, well-structured report in Markdown. Include an intro, "
-            "key findings, and a conclusion. Do not invent facts."
+            "You are a technical writer. Produce a Markdown report ONLY from the given research and analysis.\n"
+            "CRITICAL RULES:\n"
+            "1. If analysis contains 'NO_NUMERIC_DATA_AVAILABLE', ignore the analysis entirely.\n"
+            "2. If research notes say the info was NOT FOUND, write: "
+            "'The requested information could not be verified from available sources.'\n"
+            "3. NEVER invent facts, numbers, or reports.\n"
+            "4. If you don't have enough data, say so explicitly."
         ),
     )
