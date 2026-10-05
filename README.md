@@ -99,36 +99,6 @@ curl.exe -X POST http://localhost:8000/research ^
   -d "{\"query\": \"What are the top AI agent frameworks?\", \"thread_id\": \"abc123\"}"
 
 Ответ содержит final_report (Markdown-отчёт), research_notes (заметки Researcher), analysis (анализ Analyst), thread_id.
-Структура проекта
-multi-agent-research-assistant/
-├── app/
-│   ├── main.py              # FastAPI эндпоинты
-│   ├── ui.py                # Streamlit UI
-│   ├── config.py            # Pydantic-настройки
-│   ├── llm.py               # Фабрика Ollama-модели
-│   ├── schemas.py           # Pydantic-схемы
-│   ├── logger.py            # JSON-логирование
-│   ├── tools/
-│   │   ├── calculator.py    # Калькулятор на numexpr
-│   │   └── web_search.py    # Поиск через ddgs
-│   ├── agents/
-│   │   ├── researcher.py    # ReAct-агент с web search
-│   │   ├── analyst.py       # ReAct-агент с calculator
-│   │   └── writer.py        # Агент-писатель
-│   └── graph/
-│       ├── state.py         # TypedDict состояние графа
-│       ├── supervisor.py    # Детерминированный supervisor
-│       └── graph.py         # Сборка StateGraph
-├── scripts/
-│   └── ...
-├── tests/
-│   └── test_tools.py
-├── .github/workflows/
-│   └── ci.yml
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
 
 Технологический стек
 Слой	Технология
