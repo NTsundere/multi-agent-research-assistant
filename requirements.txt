@@ -1,0 +1,22 @@
+# Core
+fastapi>=0.115.6,<1.0
+uvicorn[standard]>=0.34.0,<1.0
+pydantic>=2.10.4,<3.0
+pydantic-settings>=2.7.0,<3.0
+python-dotenv>=1.0.1,<2.0
+
+# LangGraph & LangChain
+langgraph>=0.2.60,<0.3
+langchain>=0.3.13,<0.4
+langchain-community>=0.3.13,<0.4
+langgraph-checkpoint-sqlite>=2.0.11
+
+# Tools
+duckduckgo-search>=6.0.0
+numexpr>=2.10.0
+
+# Observability
+langfuse>=2.57.0,<3.0
+
+# Utils
+tenacity>=9.0.0,<10.0
